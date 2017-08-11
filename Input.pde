@@ -2,19 +2,19 @@ int startStrokeTime;
 
 void mousePressed() {
   int t0 = startStrokeTime = millis();
-  
+
   boolean connected = false;
   if (lastStroke != null && grouping && t0 - lastStroke.t1 < 1000 * MAX_GROUP_TIME) {
     t0 = lastStroke.t0;
-    connected = true;    
+    connected = true;
   }
-  
+
   currStroke = new Stroke(t0, dissapearing, fixed, currTexture, lastStroke);
-  
+
   if (connected) {
     lastStroke.next = currStroke;
   }
-  
+
   addPointToRibbon(mouseX, mouseY);
 }
 
@@ -42,37 +42,47 @@ void keyPressed() {
     if (keyCode == UP) {
       LOOP_MULTIPLIER += 1; 
       println("Loop multiplier: " + LOOP_MULTIPLIER);
+      notif.createNotification("Multiplicador loop: " + LOOP_MULTIPLIER);
     } else if (keyCode == DOWN) {
       LOOP_MULTIPLIER -= 1;
       if (LOOP_MULTIPLIER < 1) LOOP_MULTIPLIER = 1;
-      println("Loop multiplier: " + LOOP_MULTIPLIER);      
+      println("Loop multiplier: " + LOOP_MULTIPLIER);     
+      notif.createNotification("Multiplicador loop: " + LOOP_MULTIPLIER);
     } else if (keyCode == LEFT) {
-      for (Stroke stroke: layers[currLayer]) {
+      for (Stroke stroke : layers[currLayer]) {
         float ascale = stroke.getAlphaScale();
         ascale = constrain(ascale - 0.05, 0, 1);
-        stroke.setAlphaScale(ascale);   
+        stroke.setAlphaScale(ascale);
+        notif.createNotification("Opacidad trazo: " + ascale);
       }
     } else if (keyCode == RIGHT) {
-      for (Stroke stroke: layers[currLayer]) {
+      for (Stroke stroke : layers[currLayer]) {
         float ascale = stroke.getAlphaScale();
         ascale = constrain(ascale + 0.05, 0, 1);
-        stroke.setAlphaScale(ascale);   
-      }      
+        stroke.setAlphaScale(ascale);
+        notif.createNotification("Opacidad trazo: " + ascale);
+      }
     } else if (keyCode == CONTROL) {
       dissapearing = !dissapearing;
       println("Dissapearing lines: " + dissapearing);
+      //notif.createNotification("Lineas desapareciendox: " + dissapearing);
     }
     return;
   }  
-  
+
   if (key == ' ') {
     looping = !looping;
     println("Looping: " + looping);
+    notif.createNotification("Looping: " + looping);
+  }else  if (key == 'c' || key == 'C') {
+    drawcursor = !drawcursor;
+    println("Cursor render: " + drawcursor);
+    notif.createNotification("Dibujar cursor: " + drawcursor);
   } else if (key == ENTER || key == RETURN) {
     grouping = !grouping;
     println("Grouping: " + grouping);
   } else if (key == DELETE || key == BACKSPACE) {      
-    for (Stroke stroke: layers[currLayer]) {
+    for (Stroke stroke : layers[currLayer]) {
       stroke.looping = false;
       stroke.fadeOutFact = DELETE_FACTOR;
     }
@@ -81,31 +91,36 @@ void keyPressed() {
       currStroke.fadeOutFact = DELETE_FACTOR;
     }
     println("Delete layer");
+    notif.createNotification("Capa eliminada");
   } else if (key == TAB) {
     fixed = !fixed;
     println("Fixed: " + fixed);
+    notif.createNotification("Líneas fijas: " + fixed);
   } else if (key == 's') {
-   saveDrawing();        
+    saveDrawing();
   } else if (key == '1') {
     currLayer = 0;
     println("Selected stroke layer: " + 1);
+    notif.createNotification("Capa activa: " + 1);
   } else if (key == '2') {
     currLayer = 1;
     println("Selected stroke layer: " + 2);
+    notif.createNotification("Capa activa: " + 2);
   } else if (key == '3') {
     currLayer = 2;
     println("Selected stroke layer: " + 3);
+    notif.createNotification("Capa activa: " + 3);
   } else if (key == '4') {
     currLayer = 3;
     println("Selected stroke layer: " + 4);
+    notif.createNotification("Capa activa: " + 4);
   } else {
     for (int i = 0; i < TEXTURE_KEYS.length; i++) {
       if (key ==  TEXTURE_KEYS[i]) {
         currTexture = i;
+        notif.createNotification("Textura seleccionada: " + i);
         return;
       }
-    } 
-  }   
+    }
+  }
 }
-
-
